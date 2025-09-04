@@ -303,7 +303,7 @@ class Switcher {
 
         var getUrl = (platformArchive:String)->'https://github.com/HaxeFoundation/neko/releases/download/v2-4-1/neko-2.4.1-${platformArchive}';
         var downloadArchive:(peel:Int, into:String, logger:Logger)->Promise<Download.Directory> = switch [Sys.systemName(), js.Node.process.arch] {
-          case ['Windows', arch]: Download.zip.bind(getUrl('win$arch.zip'));
+          case ['Windows',   (_.contains('64') ? "64":"") => arch]: Download.zip.bind(getUrl('win$arch.zip'));
           case ['Mac', _]: Download.tar.bind(getUrl('osx-universal.tar.gz'));
           case [_, 'arm64']: Download.tar.bind(getUrl('linux-arm64.tar.gz'));
           default: Download.tar.bind(getUrl('linux64.tar.gz'));
