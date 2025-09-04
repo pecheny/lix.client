@@ -321,6 +321,7 @@ class Switcher {
         logger.info('Neko seems to be missing. Attempting download ...');
 
         var getUrl = (platformArchive:String)->'https://github.com/HaxeFoundation/neko/releases/download/v2-4-0/neko-2.4.0-${platformArchive}';
+        var getUrl = (platformArchive:String)->'https://github.com/HaxeFoundation/neko/releases/download/v2-4-1/neko-2.4.1-${platformArchive}';
         var downloadArchive:(peel:Int, into:String, logger:Logger)->Promise<Download.Directory> = switch [Sys.systemName(), js.Node.process.arch] {
           case ['Windows', _]: Download.zip.bind(getUrl('win.zip'));
           case ['Mac', _]: Download.tar.bind(getUrl('osx-universal.tar.gz'));
