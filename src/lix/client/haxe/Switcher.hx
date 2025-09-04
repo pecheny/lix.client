@@ -184,35 +184,16 @@ class Switcher {
     return versionDir(r.id).exists();
 
   function linkToOfficial(version)
-    return
-      'https://haxe.org/website-content/downloads/$version/downloads/haxe-$version-' + switch Sys.systemName() {
-        case 'Windows':
-          var arch = '';
-          // #if nodejs
-          //   if (js.node.Os.arch().contains('64')) arch = '64';
-          // #elseif sys
-          //   if (version > "3.4.3" && version != "4.0.0-preview.1") {
-          //     var wmic = new sys.io.Process('WMIC OS GET osarchitecture /value');
-          //     try
-          //       switch wmic.stdout.readAll().toString() {
-          //         case v if (v.indexOf('64') >= 0):
-          //           arch = '64';
-          //         case _:
-          //       }
-          //     catch(_:Any) {}
-          //     wmic.close();
-          //   }
-          // #else
-          //   #error
-          // #end
-          'win$arch.zip';
-        case 'Mac': 'osx.tar.gz';
-        default:
-          if (version < "3")
-            'linux.tar.gz';
-          else
-            'linux64.tar.gz';
-      }
+        return 'https://haxe.org/website-content/downloads/$version/downloads/haxe-$version-' + switch Sys.systemName() {
+            case 'Windows':
+                var arch = '';
+                if (js.node.Os.arch().contains('64'))
+                    arch = '64';
+                'win$arch.zip';
+            case 'Mac': 'osx.tar.gz';
+            default:
+                if (version < "3") 'linux.tar.gz'; else 'linux64.tar.gz';
+        }
 
   function replace(target:String, replacement:String, archiveAs:String, ?beforeReplace) {
     var root = replacement;
@@ -320,10 +301,9 @@ class Switcher {
 
         logger.info('Neko seems to be missing. Attempting download ...');
 
-        var getUrl = (platformArchive:String)->'https://github.com/HaxeFoundation/neko/releases/download/v2-4-0/neko-2.4.0-${platformArchive}';
         var getUrl = (platformArchive:String)->'https://github.com/HaxeFoundation/neko/releases/download/v2-4-1/neko-2.4.1-${platformArchive}';
         var downloadArchive:(peel:Int, into:String, logger:Logger)->Promise<Download.Directory> = switch [Sys.systemName(), js.Node.process.arch] {
-          case ['Windows', _]: Download.zip.bind(getUrl('win.zip'));
+          case ['Windows', arch]: Download.zip.bind(getUrl('win$arch.zip'));
           case ['Mac', _]: Download.tar.bind(getUrl('osx-universal.tar.gz'));
           case [_, 'arm64']: Download.tar.bind(getUrl('linux-arm64.tar.gz'));
           default: Download.tar.bind(getUrl('linux64.tar.gz'));
